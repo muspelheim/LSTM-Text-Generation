@@ -1,0 +1,235 @@
+#!/usr/bin/env hy
+
+;;;-------------------------------------
+;;; imports
+;;;-------------------------------------
+
+(import argparse
+        os)
+
+;;;-------------------------------------
+;;; classes
+;;;-------------------------------------
+
+(defclass Alphabet [object]
+  "Represents an alphabet of characters."
+
+  (defn --init-- [self chars]
+    "Creates a new alphabet instance from the specified set of characters."
+    (setv self.chars         (.join "" chars)
+          self.num-chars     (len chars)
+          self.char-to-index (dict-comp c i [(, i c) (enumerate chars)])
+          self.index-to-char (dict-comp i c [(, i c) (enumerate chars)])))
+
+  (defn char [self i]
+    "Gets the character in the alphabet associated with the specified index."
+    (get self.index-to-char i))
+
+  (defn char-index [self c]
+    "Gets the index in the alphabet associated with the specified character."
+    (get self.char-to-index c)))
+
+;;;-------------------------------------
+;;; functions
+;;;-------------------------------------
+
+(defn build-dataset [text lookback stride]
+  (setv alphabet (Alphabet (sorted (list (set text))))
+        n (// (- (len text) lookback 1) stride)
+        x (np.zeros (, n lookback (. alphabet num-chars)) :dtype np.bool)
+        y (np.zeros (, n          (. alphabet num-chars)) :dtype np.bool))
+  (for [i (range n)]
+    (setv a  (* i stride)
+          s  (cut text a (+ a lookback))
+          yc (. text [(+ a lookback)]))
+    (for [(, j xc) (enumerate s)]
+      (setv (. x [i] [j] [(.char-index alphabet xc)]) 1))
+    (setv (. y [i] [(.char-index alphabet yc)]) 1))
+  (, alphabet x y))
+
+(defn build-x [alphabet text]
+  (setv x (np.zeros (, 1 (len text) (. alphabet num-chars)) :dtype np.bool))
+  (for [(, i c) (enumerate text)]
+    (setv (. x [0] [i] [(.char-index alphabet c)]) 1))
+  x)
+
+(defn download-file [url]
+  "Downloads a file from the specified URL and returns its local path."
+  (setv (, _, fn) (.split os.path url))
+  (keras.utils.data-utils.get-file fn :origin url))
+
+(defn load-model [path]
+  (setv alphabet-path (+ path ".txt")
+        model-path    (+ path ".h5"))
+
+  (with [f (open alphabet-path "r")]
+    (setv chars (.read f)))
+
+  (, (Alphabet chars) (keras.models.load_model model-path)))
+
+(defn load-source [s]
+  "Loads the specified source, either a filename or an HTTP URL."
+  (if (or (.startswith s "http://")
+          (.startswith s "https://"))
+    (read-file (download-file s))
+    (read-file s)))
+
+(defn load-all-sources [sources]
+  "Loads all specified sources and returns them in a list."
+  (list-comp (load-source s) [s sources]))
+
+(defn read-file [fn]
+  "Reads and returns the contents of the specified file."
+  (with [f (open fn "r")]
+    (.read f)))
+
+(defn save-model [alphabet model path]
+  (setv model-path (+ path ".h5"))
+  (if (os.path.isfile model-path)
+    (do
+      (setv bak-path (+ model-path ".bak"))
+      (if (os.path.isfile bak-path)
+        (os.remove bak-path))
+      (os.rename model-path bak-path)))
+  (.save model model-path)
+
+  (setv alphabet-path (+ path ".txt"))
+  (with [f (open alphabet-path "w")]
+    (.write f (. alphabet chars))))
+
+(defn create-model [alphabet layers lookback]
+  (setv model (keras.models.Sequential))
+
+  (for [(, i layer) (enumerate layers)]
+    (.add model (keras.layers.recurrent.LSTM layer
+                  :input-shape (, lookback (. alphabet num-chars))
+                  :return-sequences (!= i (- (len layers) 1))))
+    (.add model (keras.layers.core.Dropout 0.2)))
+
+  (.add model (keras.layers.core.Dense (. alphabet num-chars)))
+  (.add model (keras.layers.core.Activation "softmax"))
+
+  (.compile model :loss      "categorical_crossentropy"
+                  :metrics   ["categorical_accuracy"]
+                  :optimizer "adam")
+
+  model)
+
+(defn import-modules []
+  "Imports modules needed by the program."
+  (global keras np)
+  (import keras
+          keras.utils.data-utils
+          [numpy :as np]))
+
+(defn parse-args []
+  (setv parser (argparse.ArgumentParser))
+
+  (.add-argument parser "--batch-size" :default 128 :metavar "N" :type int
+    :help "specify the batch size")
+
+  (.add-argument parser "--cpu" :action "store_true"
+    :help "only use cpu")
+
+  (.add-argument parser "--generate" :metavar "SEED" :type str
+    :help "generate text by specifying a seed")
+
+  (.add-argument parser "--layers" :default "128,64" :metavar "S" :type str
+    :help "specify the layers")
+
+  (.add-argument parser "--lookback" :default 32 :metavar "N" :type int
+    :help "specify the lookback (number of previous characters to look at)")
+
+  (.add-argument parser "--lower" :action "store_true"
+    :help "make source text lower case")
+
+  (.add-argument parser "--model" :default "model" :type str
+    :help "specify the model filename")
+
+  (.add-argument parser "--sources" :nargs "*" :type str
+    :help "specify the data sources to use")
+
+  (.add-argument parser "--stride" :default 3 :metavar "N" :type int
+    :help "specify the sliding window stride (number of characters)")
+
+  (.parse-args parser))
+
+(defn sample [y]
+  (setv y (.astype (np.asarray y) np.float64)
+        y (np.log y)
+        y-exp (np.exp y)
+        y (/ y-exp (np.sum y-exp))
+        p (np.random.multinomial 1 y 1))
+  (np.argmax p))
+
+(defn generate [alphabet model lookback seed]
+  (print "\npress ctrl-c to exit\n\ngenerating...\n\n")
+
+  (setv text seed)
+  (while (< (len text) lookback)
+    (setv text (+ " " text)))
+
+  (while True
+    (setv x (build-x alphabet text)
+          y (.predict model x)
+          i (sample (. y [0]))
+          c (.char alphabet i))
+    (setv text (+ (cut text 1) c))
+    (.write sys.stdout c)
+    (.flush sys.stdout)))
+
+(defn train [batch-size alphabet model x y model-name]
+  (print "\npress ctrl-c to exit\n\ntraining...\n\n")
+
+  (while True
+    (.fit model x y :batch-size batch-size :nb-epoch 1)
+    (save-model alphabet model model-name)))
+
+;;;-------------------------------------
+;;; entry point
+;;;-------------------------------------
+
+(defmain [&rest args]
+  (print)
+
+  (setv args (parse-args))
+
+  (setv batch-size (. args batch-size)
+        layers     (list-comp (int n) [n (.split (. args layers) ",")])
+        lookback   (. args lookback)
+        stride     (. args stride))
+
+  (if (. args cpu)
+    (assoc os.environ "CUDA_VISIBLE_DEVICES" ""))
+
+  (print "initializing...")
+  (import-modules)
+
+  (setv model-name (. args model))
+  (if (.endswith model-name ".h5")
+    (setv model-name (cut model-name 0 -3)))
+
+  (if-not (. args generate)
+    (do
+      (print "loading sources...")
+      (setv text (.join "" (load-all-sources (. args sources))))
+
+      (if (. args lower)
+        (setv text (.lower text)))
+
+      (print "building dataset...")
+      (setv (, alphabet x y) (build-dataset text lookback stride))))
+
+  (if (os.path.isfile (+ model-name ".h5"))
+    (do
+      (print "loading model...")
+      (setv (, alphabet model) (load-model model-name)))
+    (do
+      (print "creating model...")
+      (setv model (create-model alphabet layers lookback))))
+
+  (.summary model)
+
+  (if (. args generate)
+    (generate alphabet model lookback (. args generate))
+    (train batch-size alphabet model x y model-name)))
