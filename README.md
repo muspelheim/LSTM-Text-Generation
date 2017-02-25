@@ -2,7 +2,7 @@
 ![License](https://img.shields.io/github/license/philiparvidsson/Pymake2-Build-Tool.svg)
 
 ## What is this?
-During the time that I was writing my bachelor's thesis *(Sequence-to-sequence Learning of Financial Time Series in Algorithmic Trading*, in which I used LSTM-based RNNs for modeling the problem), I became interested in natural language processing. After reading Andrej Karpathy's blog post titled [The Unreasonable Effectiveness of Recurrent Neural Networks](http://karpathy.github.io/2015/05/21/rnn-effectiveness/), I decided to give text generation using LSTMs for NLP a go. Although slightly trivial, the project still comprises an interesting program and demo, and gives really interesting (and sometimes very funny) results.
+During the time that I was writing my bachelor's thesis *(Sequence-to-sequence Learning of Financial Time Series in Algorithmic Trading*, in which I used LSTM-based RNNs for modeling the thesis problem), I became interested in natural language processing. After reading Andrej Karpathy's blog post titled [The Unreasonable Effectiveness of Recurrent Neural Networks](http://karpathy.github.io/2015/05/21/rnn-effectiveness/), I decided to give text generation using LSTMs for NLP a go. Although slightly trivial, the project still comprises an interesting program and demo, and gives really interesting (and sometimes very funny) results.
 
 I implemented the program over the course of a weekend in [Hy](http://hylang.org) (a LISP built on top of Python) using Keras and TensorFlow. You can train the model on any text sources you like. Remember to give it enough time to go over at least fifty epochs, otherwise the generated text will not be very interesting, rather seemiling random garbage.
 
