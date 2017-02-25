@@ -4,19 +4,24 @@ During the time that I was writing my [bachelor's thesis (Sequence-to-sequence L
 Over the course of a weekend, I implemented the program in [Hy](http://hylang.org) (a LISP built on top of Python) using Keras and TensorFlow. You can train the model on any sources you like. Remember to give it enough time to go over at least fifty epochs, otherwise the generated text will not be very interesting.
 
 ## Prerequisites
-* Python
-* TensorFlow
-* Keras
-* Hy
-* CUDA
-* cuDNN
+* [CUDA](http://nvidia.com/object/cuda_home_new.html)
+* [cuDNN](https://developer.nvidia.com/cudnn)
+* [h5py](http://h5py.org/)
+* [Hy](http://hylang.org)
+* [Keras](https://keras.io/)
+* [NumPy](http://numpy.org)
+* [Python](https://python.org)
+* [TensorFlow](https://www.tensorflow.org/)
 
-## Running
-1. Clone this repository:
+## Running the program
+1. Install prerequisites:
+   `pip install h5py hy keras numpy tensorflow-gpu`
+   *Don't forget to install CUDA and cuDNN if you want to run the computations on your graphics card!*
+2. Clone this repository:
    `git clone https://github.com/philiparvidsson/LSTM-Text-Generation`
-2. Change working directory to it:
+3. Change working directory to it:
    `cd LSTM-Text-Generation`
-3. Run it and specify sources:
+4. Run it and specify sources:
    `./train.hy --sources lol.txt`
 
 After each completed epoch, the program will save the model to a file. You can use it to generate text by invoking the program with different arguments:
