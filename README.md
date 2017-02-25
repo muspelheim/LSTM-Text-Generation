@@ -19,7 +19,7 @@ Over the course of a weekend, I implemented the program in [Hy](http://hylang.or
 ## Running the program
 1. Install prerequisites:
    `pip install h5py hy keras numpy tensorflow-gpu`
-   <sub>*Don't forget to install CUDA and cuDNN if you want to run the computations on your graphics card!*</sub>
+   <sub><b>NOTE:</b> <i>Don't forget to install CUDA and cuDNN if you want to run the computations on your graphics card!</i></sub>  
 2. Clone this repository:
    `git clone https://github.com/philiparvidsson/LSTM-Text-Generation`
 3. Change working directory to it:
