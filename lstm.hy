@@ -43,10 +43,14 @@
   (for [i (range n)]
     (setv a  (* i stride)
           s  (cut text a (+ a lookback))
-          yc (. text [(+ a lookback)]))
+          yc (. text [(+ a lookback)])
+          p  (/ i n))
     (for [(, j xc) (enumerate s)]
       (setv (. x [i] [j] [(.char-index alphabet xc)]) 1))
-    (setv (. y [i] [(.char-index alphabet yc)]) 1))
+    (setv (. y [i] [(.char-index alphabet yc)]) 1)
+    (if (= (% i 10000) 0)
+      (print (.format "\r{:.2f}%" (* p 100.0)) :end "")))
+  (print "100.0%")
   (, alphabet x y))
 
 (defn build-x [alphabet text]
@@ -235,7 +239,22 @@
   (if (.endswith model-name ".h5")
     (setv model-name (cut model-name 0 -3)))
 
-  (if-not (. args generate)
+  (if (os.path.isfile (+ model-name ".h5"))
+    (do
+      (print "loading model...")
+      (setv (, alphabet model) (load-model model-name)
+            lookback           (. model layers [0] input-shape [1]))
+
+      (if-not (. args generate)
+        (do
+          (print "loading sources...")
+          (setv text (.join "" (load-all-sources (. args sources))))
+
+          (if (. args lower)
+            (setv text (.lower text)))
+
+          (print "building dataset...")
+          (setv (, alphabet x y) (build-dataset text lookback stride)))))
     (do
       (print "loading sources...")
       (setv text (.join "" (load-all-sources (. args sources))))
@@ -244,16 +263,10 @@
         (setv text (.lower text)))
 
       (print "building dataset...")
-      (setv (, alphabet x y) (build-dataset text lookback stride))))
+      (setv (, alphabet x y) (build-dataset text lookback stride)))
 
-  (if (os.path.isfile (+ model-name ".h5"))
-    (do
-      (print "loading model...")
-      (setv (, alphabet model) (load-model model-name)
-            lookback           (. model layers [0] input-shape [1])))
-    (do
       (print "creating model...")
-      (setv model (create-model alphabet layers learning-rate lookback))))
+      (setv model (create-model alphabet layers learning-rate lookback)))
 
   (.summary model)
 
