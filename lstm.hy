@@ -111,7 +111,7 @@
                            :input-shape      (, lookback (. alphabet num-chars))
                            :return-sequences is-last)]))
 
-(defn create-model [alphabet layers lookback]
+(defn create-model [alphabet layers learning-rate lookback]
   "Creates an LSTM-based RNN Keras model for text processing."
   (setv model (keras.models.Sequential))
 
@@ -124,7 +124,7 @@
 
   (.compile model :loss      "categorical_crossentropy"
                   :metrics   ["categorical_accuracy"]
-                  :optimizer "adam")
+                  :optimizer (keras.optimizers.RMSprop :lr learning-rate))
 
   model)
 
@@ -148,10 +148,13 @@
   (.add-argument parser "--generate" :metavar "<seed text>" :type str
     :help "generate text by specifying a seed")
 
-  (.add-argument parser "--layers" :default "128" :metavar "<s>" :type str
+  (.add-argument parser "--layers" :default "128" :metavar "<layers>" :type str
     :help "specify the layers (for example: lstm:128,dropout:0.2)")
 
-  (.add-argument parser "--lookback" :default 32 :metavar "<n>" :type int
+  (.add-argument parser "--learning-rate" :default "0.01" :metavar "<rate>" :type float
+    :help "specify the learning rate")
+
+  (.add-argument parser "--lookback" :default 32 :metavar "<length>" :type int
     :help "specify the lookback (number of previous characters to look at)")
 
   (.add-argument parser "--lower" :action "store_true"
@@ -184,6 +187,7 @@
   (setv text seed)
   (while (< (len text) lookback)
     (setv text (+ " " text)))
+  (setv text (cut text (- lookback)))
 
   (while True
     (setv x (build-x alphabet text)
@@ -197,7 +201,10 @@
 (defn train [batch-size alphabet model x y model-name]
   (print "\npress ctrl-c to exit\n\ntraining...\n\n")
 
+  (setv it 1)
   (while True
+    (print "iteration" it)
+    (setv it (inc it))
     (.fit model x y :batch-size batch-size :nb-epoch 1)
     (save-model alphabet model model-name)))
 
@@ -211,10 +218,11 @@
 
   (setv args (parse-args))
 
-  (setv batch-size (. args batch-size)
-        layers     (.split (. args layers) ",")
-        lookback   (. args lookback)
-        stride     (. args stride))
+  (setv batch-size    (. args batch-size)
+        layers        (.split (. args layers) ",")
+        learning-rate (. args learning-rate)
+        lookback      (. args lookback)
+        stride        (. args stride))
 
   (if (. args cpu)
     (assoc os.environ "CUDA_VISIBLE_DEVICES" ""))
@@ -244,10 +252,12 @@
             lookback           (. model layers [0] input-shape [1])))
     (do
       (print "creating model...")
-      (setv model (create-model alphabet layers lookback))))
+      (setv model (create-model alphabet layers learning-rate lookback))))
 
   (.summary model)
 
-  (if (. args generate)
-    (generate alphabet model lookback (. args generate))
-    (train batch-size alphabet model x y model-name)))
+  (try
+    (if (. args generate)
+      (generate alphabet model lookback (. args generate))
+      (train batch-size alphabet model x y model-name))
+    (except [e KeyboardInterrupt] (print "\n\n"))))
