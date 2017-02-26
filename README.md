@@ -21,7 +21,7 @@ The LSTM is trained *character-by-character* (in contrast to *word-by-word*) whi
 ## Running the program
 1. Install prerequisites:
    `pip install h5py hy keras numpy tensorflow`  
-   <sup><i><b>NOTE:</b> If you want to perform computations on your graphics card, first install CUDA and cuDNN, then install `tensorflow-gpu` instead of `tensorflow` above.</i></sup>  
+   <sup><i><b>&nbsp;&nbsp;NOTE:</b> If you want to perform computations on your graphics card, first install CUDA and cuDNN, then install `tensorflow-gpu` instead of `tensorflow` above.</i></sup>  
 2. Clone this repository:
    `git clone https://github.com/philiparvidsson/LSTM-Text-Generation`
 3. Change working directory to it:
@@ -35,25 +35,33 @@ After each completed epoch, the program will save the model to a file. You can t
 
 Type `./lstm.hy --help` to see more information on how to use the program.
 
-## Configuring your model
+## Configuration
+There are various settings to play with in the program. For the purpose of this program, there are no "optimal" settings- Rather, you should go ahead and experiment to come up with different, interesting results.
 
+### Disabling the GPU
+If you only want to do computations on the GPU (despite having installed GPU-enabled TensorFlow), specify the `--cpu` flag.
+
+### Configuring layers
 The program defaults to a single 128-cell LSTM layer. You can specify custom layers using the `--layers` argument. For example, if we wanted to LSTM layers with 128 cells in the first and 64 in the second, with a dropout layer (with a dropout probability of 20%) we would specify the following command line argument to the program:
 
 `--layers lstm:128,dropout:0.2,lstm:64`  
-<sup><i><b>NOTE:</b> The `lstm:` prefix is optional and may be omitted.</i></sup>
+<sup><i><b>&nbsp;&nbsp;NOTE:</b> The `lstm:` prefix is optional and may be omitted.</i></sup>
 
-You may want to experiment with different layer configurations as they all give different results!
-
-Furthermore, you can use the `--lookback` command line argument to specify the size (in number of characters) of the sliding window during training. The program defaults to a lookback value of 32 characters, but you can set it to anything you like (although a greater lookback value requires more memory). For example, if you want to take the last 50 charactesr into account during training, specify the following command line argument:
+### Lookback
+You can use the `--lookback` command line argument to specify the size (in number of characters) of the sliding window during training. The program defaults to a lookback value of 32 characters, but you can set it to anything you like (although a greater lookback value requires more memory). For example, if you want to take the last 50 charactesr into account during training, specify the following command line argument:
 
 `--lookback 50`
 
+### Stride
 Using the `---stride` command line argument lets you set how many characters to move the sliding window forward after each training iteration. This setting can be thought of as a way to reduce the memory footprint for large corpora. The default is 3. Example:
 
 `--stride 7`
 
 ## Results
-
 Below are a few interesting results attained by running the program on various corpora:
 
+### King James Bible
 sdlgkdsg
+
+### King James Bible + Snoop Dogg lyrics
+asda
