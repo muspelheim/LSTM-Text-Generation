@@ -50,7 +50,7 @@
     (setv (. y [i] [(.char-index alphabet yc)]) 1)
     (if (= (% i 10000) 0)
       (print (.format "\r{:.2f}%" (* p 100.0)) :end "")))
-  (print "100.0%")
+  (print "\r100.0%")
   (, alphabet x y))
 
 (defn build-x [alphabet text]
@@ -263,10 +263,10 @@
         (setv text (.lower text)))
 
       (print "building dataset...")
-      (setv (, alphabet x y) (build-dataset text lookback stride)))
+      (setv (, alphabet x y) (build-dataset text lookback stride))
 
       (print "creating model...")
-      (setv model (create-model alphabet layers learning-rate lookback)))
+      (setv model (create-model alphabet layers learning-rate lookback))))
 
   (.summary model)
 
