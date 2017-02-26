@@ -48,7 +48,7 @@ Furthermore, you can use the `--lookback` command line argument to specify the s
 
 `--lookback 50`
 
-Using the `---stride` command line argument lets you set how many characters to move the sliding window forward after each training iteration. This option can be thought of as a way to reduce the memory footprint for large corpora. The default is 3. Example:
+Using the `---stride` command line argument lets you set how many characters to move the sliding window forward after each training iteration. This setting can be thought of as a way to reduce the memory footprint for large corpora. The default is 3. Example:
 
 `--stride 7`
 
