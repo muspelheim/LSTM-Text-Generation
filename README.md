@@ -21,7 +21,7 @@ The LSTM is trained *character-by-character* (in contrast to *word-by-word*) whi
 ## Running the program
 1. Install prerequisites:
    `pip install h5py hy keras numpy tensorflow-gpu`  
-   <sub><i><b>NOTE:</b> Don't forget to install CUDA and cuDNN if you want to run the computations on your graphics card!</i></sub>  
+   <sup><i><b>NOTE:</b> Don't forget to install CUDA and cuDNN if you want to run the computations on your graphics card!</i></sup>  
 2. Clone this repository:
    `git clone https://github.com/philiparvidsson/LSTM-Text-Generation`
 3. Change working directory to it:
