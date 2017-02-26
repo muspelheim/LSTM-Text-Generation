@@ -34,6 +34,8 @@
 ;;;-------------------------------------
 
 (defn build-dataset [text lookback stride]
+  "Builds a dataset from the specified text with the specified settings by
+   compiling it to a one-hot encoded tensor."
   (setv alphabet (Alphabet (sorted (list (set text))))
         n (// (- (len text) lookback 1) stride)
         x (np.zeros (, n lookback (. alphabet num-chars)) :dtype np.bool)
@@ -59,6 +61,7 @@
   (keras.utils.data-utils.get-file fn :origin url))
 
 (defn load-model [path]
+  "Loads the specified model."
   (setv alphabet-path (+ path ".txt")
         model-path    (+ path ".h5"))
 
@@ -84,6 +87,7 @@
     (.read f)))
 
 (defn save-model [alphabet model path]
+  "Saves a model and alphabet to the specified path."
   (setv model-path (+ path ".h5"))
   (if (os.path.isfile model-path)
     (do
@@ -97,14 +101,23 @@
   (with [f (open alphabet-path "w")]
     (.write f (. alphabet chars))))
 
+(defn create-layer [spec is-last alphabet model lookback]
+  (if (= (.find spec ":") -1)
+    (setv t "lstm"
+          n (int spec))
+    (setv (, t n) (.split spec ":")))
+  (cond [(= t "dropout") (keras.layers.core.Dropout (float n))]
+        [(= t "lstm")    (keras.layers.recurrent.LSTM (int n)
+                           :input-shape      (, lookback (. alphabet num-chars))
+                           :return-sequences is-last)]))
+
 (defn create-model [alphabet layers lookback]
+  "Creates an LSTM-based RNN Keras model for text processing."
   (setv model (keras.models.Sequential))
 
   (for [(, i layer) (enumerate layers)]
-    (.add model (keras.layers.recurrent.LSTM layer
-                  :input-shape (, lookback (. alphabet num-chars))
-                  :return-sequences (!= i (- (len layers) 1))))
-    (.add model (keras.layers.core.Dropout 0.2)))
+    (setv is-last (!= i (- (len layers) 1)))
+    (.add model (create-layer layer is-last alphabet model lookback)))
 
   (.add model (keras.layers.core.Dense (. alphabet num-chars)))
   (.add model (keras.layers.core.Activation "softmax"))
@@ -123,38 +136,40 @@
           [numpy :as np]))
 
 (defn parse-args []
+  "Parses command line arguments."
   (setv parser (argparse.ArgumentParser))
 
-  (.add-argument parser "--batch-size" :default 128 :metavar "N" :type int
+  (.add-argument parser "--batch-size" :default 128 :metavar "<n>" :type int
     :help "specify the batch size")
 
   (.add-argument parser "--cpu" :action "store_true"
     :help "only use cpu")
 
-  (.add-argument parser "--generate" :metavar "SEED" :type str
+  (.add-argument parser "--generate" :metavar "<seed text>" :type str
     :help "generate text by specifying a seed")
 
-  (.add-argument parser "--layers" :default "128,64" :metavar "S" :type str
-    :help "specify the layers")
+  (.add-argument parser "--layers" :default "128" :metavar "<s>" :type str
+    :help "specify the layers (for example: lstm:128,dropout:0.2)")
 
-  (.add-argument parser "--lookback" :default 32 :metavar "N" :type int
+  (.add-argument parser "--lookback" :default 32 :metavar "<n>" :type int
     :help "specify the lookback (number of previous characters to look at)")
 
   (.add-argument parser "--lower" :action "store_true"
     :help "make source text lower case")
 
-  (.add-argument parser "--model" :default "model" :type str
+  (.add-argument parser "--model" :default "model" :metavar "<path>" :type str
     :help "specify the model filename")
 
-  (.add-argument parser "--sources" :nargs "*" :type str
+  (.add-argument parser "--sources" :metavar "<path>" :nargs "*" :type str
     :help "specify the data sources to use")
 
-  (.add-argument parser "--stride" :default 3 :metavar "N" :type int
-    :help "specify the sliding window stride (number of characters)")
+  (.add-argument parser "--stride" :default 3 :metavar "<n>" :type int
+    :help "specify the sliding window stride (in number of characters)")
 
   (.parse-args parser))
 
 (defn sample [y]
+  "Samples a character index from the specified predictions."
   (setv y (.astype (np.asarray y) np.float64)
         y (np.log y)
         y-exp (np.exp y)
@@ -163,6 +178,7 @@
   (np.argmax p))
 
 (defn generate [alphabet model lookback seed]
+  "Generates text using the specified settings."
   (print "\npress ctrl-c to exit\n\ngenerating...\n\n")
 
   (setv text seed)
@@ -190,12 +206,13 @@
 ;;;-------------------------------------
 
 (defmain [&rest args]
+  "Program entry point."
   (print)
 
   (setv args (parse-args))
 
   (setv batch-size (. args batch-size)
-        layers     (list-comp (int n) [n (.split (. args layers) ",")])
+        layers     (.split (. args layers) ",")
         lookback   (. args lookback)
         stride     (. args stride))
 
@@ -223,7 +240,8 @@
   (if (os.path.isfile (+ model-name ".h5"))
     (do
       (print "loading model...")
-      (setv (, alphabet model) (load-model model-name)))
+      (setv (, alphabet model) (load-model model-name)
+            lookback           (. model layers [0] input-shape [1])))
     (do
       (print "creating model...")
       (setv model (create-model alphabet layers lookback))))
