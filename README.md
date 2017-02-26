@@ -38,7 +38,7 @@ Type `./lstm.hy --help` to see more information on how to use the program.
 ## Configuration
 There are various settings to play with in the program. For the purpose of this program, there are no "optimal" settings- Rather, you should go ahead and experiment to come up with different, interesting results.
 
-### Disabling the GPU
+### Disabling GPU acceleration
 If you only want to do computations on the GPU (despite having installed GPU-enabled TensorFlow), specify the `--cpu` flag.
 
 ### Configuring layers
