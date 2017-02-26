@@ -1,5 +1,5 @@
 # Generating Text with an LSTM
-![License](https://img.shields.io/github/license/philiparvidsson/Pymake2-Build-Tool.svg)
+![License](https://img.shields.io/github/license/philiparvidsson/LSTM-Text-Generation.svg)
 
 ## What is this?
 During the time that I was writing my thesis *Sequence-to-sequence Learning of Financial Time Series in Algorithmic Trading* (in which I used LSTM-based RNNs for modeling the thesis problem), I became interested in natural language processing. After reading Andrej Karpathy's blog post titled [The Unreasonable Effectiveness of Recurrent Neural Networks](http://karpathy.github.io/2015/05/21/rnn-effectiveness/), I decided to give text generation using LSTMs for NLP a go. Although slightly trivial, the project still comprises an interesting program and demo, and gives really interesting (and sometimes very funny) results.
@@ -64,10 +64,4 @@ Using the `---stride` command line argument lets you set how many characters to 
 `--stride 7`
 
 ## Results
-Below are a few interesting results attained by running the program on various corpora:
-
-### King James Bible
-sdlgkdsg
-
-### King James Bible + Snoop Dogg lyrics
-asda
+n/a
