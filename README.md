@@ -2,9 +2,9 @@
 ![License](https://img.shields.io/github/license/philiparvidsson/Pymake2-Build-Tool.svg)
 
 ## What is this?
-During the time that I was writing my bachelor's thesis *(Sequence-to-sequence Learning of Financial Time Series in Algorithmic Trading*, in which I used LSTM-based RNNs for modeling the thesis problem), I became interested in natural language processing. After reading Andrej Karpathy's blog post titled [The Unreasonable Effectiveness of Recurrent Neural Networks](http://karpathy.github.io/2015/05/21/rnn-effectiveness/), I decided to give text generation using LSTMs for NLP a go. Although slightly trivial, the project still comprises an interesting program and demo, and gives really interesting (and sometimes very funny) results.
+During the time that I was writing my thesis *Sequence-to-sequence Learning of Financial Time Series in Algorithmic Trading* (in which I used LSTM-based RNNs for modeling the thesis problem), I became interested in natural language processing. After reading Andrej Karpathy's blog post titled [The Unreasonable Effectiveness of Recurrent Neural Networks](http://karpathy.github.io/2015/05/21/rnn-effectiveness/), I decided to give text generation using LSTMs for NLP a go. Although slightly trivial, the project still comprises an interesting program and demo, and gives really interesting (and sometimes very funny) results.
 
-I implemented the program over the course of a weekend in [Hy](http://hylang.org) (a LISP built on top of Python) using Keras and TensorFlow. You can train the model on any text sources you like. Remember to give it enough time to go over at least fifty epochs, otherwise the generated text will not be very interesting, rather seemiling random garbage.
+I implemented the program over the course of a weekend in [Hy](http://hylang.org) (a LISP built on top of Python) using Keras and TensorFlow. You can train the model on any text sources you like. Remember to give it enough time to go over at least fifty epochs, otherwise the generated text will not be very interesting, rather seemingly random garbage.
 
 The LSTM is trained *character-by-character* (in contrast to *word-by-word*) which means that it learns to write *one single character* at a time to construct words. This has the peculiar effect of the LSTM making up words during generation, though still producing coherent sentences (with enough training)!
 
@@ -36,7 +36,10 @@ After each completed epoch, the program will save the model to a file. You can t
 Type `./lstm.hy --help` to see more information on how to use the program.
 
 ## Configuration
-There are various settings to play with in the program. For the purpose of this program, there are no "optimal" settings- Rather, you should go ahead and experiment to come up with different, interesting results.
+There are various settings to play with in the program. For the purpose of this program, there are no "optimal" settings- Rather, you should go ahead and experiment to come up with different, interesting results. If you want to see all available settings, type `./lstm.hy --help` in your terminal, with the working directory set to the path where the `lstm.hy` program is located.
+
+### Batch size
+The batch size is set like this: `--batch-size 256`. The default is 128.
 
 ### Disabling GPU acceleration
 If you only want to do computations on the GPU (despite having installed GPU-enabled TensorFlow), specify the `--cpu` flag.
@@ -45,7 +48,10 @@ If you only want to do computations on the GPU (despite having installed GPU-ena
 The program defaults to a single 128-cell LSTM layer. You can specify custom layers using the `--layers` argument. For example, if we wanted to LSTM layers with 128 cells in the first and 64 in the second, with a dropout layer (with a dropout probability of 20%) we would specify the following command line argument to the program:
 
 `--layers lstm:128,dropout:0.2,lstm:64`  
-<sup><i><b>&nbsp;&nbsp;&nbsp;&nbsp;NOTE:</b> The `lstm:` prefix is optional and may be omitted.</i></sup>
+<sup><i><b>&nbsp;&nbsp;&nbsp;&nbsp;NOTE:</b> The last layer must not be a dropout layer.</i></sup>
+
+### Learning rate
+The learning rate (which defaults to 0.01) can be set the following way: `--learning-rate 0.02`
 
 ### Lookback
 You can use the `--lookback` command line argument to specify the size (in number of characters) of the sliding window during training. The program defaults to a lookback value of 32 characters, but you can set it to anything you like (although a greater lookback value requires more memory). For example, if you want to take the last 50 charactesr into account during training, specify the following command line argument:
