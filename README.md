@@ -72,6 +72,9 @@ Below are a few interesting results attained by running the program on various c
 
 ### King James bible
 — *"9:7 And the man of vily made mad the land of Egypt."*
+
 — *"12:26 And God said now, Seruily, I will judge the mighty servants, five kindreds which the souls of thy bread people."*
+
 — *"18:34 For your feet, O Ishmel."*
+
 — *"119:6 The children of Israel said unto him, Fear upon the seven commandment, I will go us."*
