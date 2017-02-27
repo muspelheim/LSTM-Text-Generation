@@ -66,10 +66,6 @@ Using the `---stride` command line argument lets you set how many characters to 
 ## Results
 Below are a few interesting results attained by running the program on various corpora.
 
-**NOTE: There is foul language ahead. Please stop reading here if you are a sensitive person.**
-
----
-
 ### King James bible
 — *"9:7 And the man of vily made mad the land of Egypt."*
 
