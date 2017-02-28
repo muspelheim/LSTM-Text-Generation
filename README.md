@@ -45,7 +45,7 @@ The batch size is set like this: `--batch-size 256`. The default is 128.
 If you only want to do computations on the CPU (despite having installed GPU-enabled TensorFlow), specify the `--cpu` flag.
 
 ### Configuring layers
-The program defaults to a single 128-cell LSTM layer. You can specify custom layers using the `--layers` argument. For example, if we wanted to LSTM layers with 128 cells in the first and 64 in the last, with a dropout layer (with a dropout probability of 20%) inbetween we would specify the following command line argument to the program:
+The program defaults to a single 128-cell LSTM layer. You can specify custom layers using the `--layers` argument. For example, if we wanted to LSTM layers with 128 cells in the first and 64 in the last, with a dropout layer (with a dropout probability of 20%) inbetween, we would specify the following command line argument to the program:
 
 `--layers lstm:128,dropout:0.2,lstm:64`  
 <sup><i><b>&nbsp;&nbsp;&nbsp;&nbsp;NOTE:</b> The last layer must not be a dropout layer.</i></sup>
