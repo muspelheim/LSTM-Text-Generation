@@ -1,5 +1,5 @@
 # Generating Text with an LSTM
-![License](https://img.shields.io/github/license/philiparvidsson/Pymake2-Build-Tool.svg)
+![License](https://img.shields.io/github/license/philiparvidsson/LSTM-Text-Generation.svg)
 
 ## What is this?
 During the time that I was writing my thesis *Sequence-to-sequence Learning of Financial Time Series in Algorithmic Trading* (in which I used LSTM-based RNNs for modeling the thesis problem), I became interested in natural language processing. After reading Andrej Karpathy's blog post titled [The Unreasonable Effectiveness of Recurrent Neural Networks](http://karpathy.github.io/2015/05/21/rnn-effectiveness/), I decided to give text generation using LSTMs for NLP a go. Although slightly trivial, the project still comprises an interesting program and demo, and gives really interesting (and sometimes very funny) results.
@@ -42,10 +42,10 @@ There are various settings to play with in the program. For the purpose of this 
 The batch size is set like this: `--batch-size 256`. The default is 128.
 
 ### Disabling GPU acceleration
-If you only want to do computations on the GPU (despite having installed GPU-enabled TensorFlow), specify the `--cpu` flag.
+If you only want to do computations on the CPU (despite having installed GPU-enabled TensorFlow), specify the `--cpu` flag.
 
 ### Configuring layers
-The program defaults to a single 128-cell LSTM layer. You can specify custom layers using the `--layers` argument. For example, if we wanted to LSTM layers with 128 cells in the first and 64 in the second, with a dropout layer (with a dropout probability of 20%) we would specify the following command line argument to the program:
+The program defaults to a single 128-cell LSTM layer. You can specify custom layers using the `--layers` argument. For example, if we wanted to LSTM layers with 128 cells in the first and 64 in the last, with a dropout layer (with a dropout probability of 20%) inbetween, we would specify the following command line argument to the program:
 
 `--layers lstm:128,dropout:0.2,lstm:64`  
 <sup><i><b>&nbsp;&nbsp;&nbsp;&nbsp;NOTE:</b> The last layer must not be a dropout layer.</i></sup>
@@ -64,10 +64,13 @@ Using the `---stride` command line argument lets you set how many characters to 
 `--stride 7`
 
 ## Results
-Below are a few interesting results attained by running the program on various corpora:
+Below are a few interesting results attained by running the program on various corpora.
 
-### King James Bible
-sdlgkdsg
+### King James bible
+— *"9:7 And the man of vily made mad the land of Egypt."*
 
-### King James Bible + Snoop Dogg lyrics
-asda
+— *"12:26 And God said now, Seruily, I will judge the mighty servants, five kindreds which the souls of thy bread people."*
+
+— *"18:34 For your feet, O Ishmel."*
+
+— *"119:6 The children of Israel said unto him, Fear upon the seven commandment, I will go us."*
