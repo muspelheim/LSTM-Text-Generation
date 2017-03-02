@@ -105,27 +105,30 @@
   (with [f (open alphabet-path "w")]
     (.write f (. alphabet chars))))
 
-(defn create-layer [spec last? alphabet model lookback]
+(defn create-layer [spec first? last? alphabet model lookback]
   (if (= (.find spec ":") -1)
     (setv t "lstm"
           n (int spec))
     (setv (, t n) (.split spec ":")))
   (cond [(= t "dropout") (keras.layers.core.Dropout (float n))]
-        [(= t "lstm")    (keras.layers.recurrent.LSTM (int n)
-                           :input-shape      (, lookback (. alphabet num-chars))
-                           :return-sequences (not last?))]))
+        [(= t "lstm")    (if first?
+                           (keras.layers.recurrent.LSTM (int n)
+                              :input-shape      (, lookback (. alphabet num-chars))
+                              :return-sequences True)
+                           (keras.layers.recurrent.LSTM (int n)
+                              :return-sequences (not last?)))]))
 
 (defn create-model [alphabet layers learning-rate lookback]
   "Creates an LSTM-based RNN Keras model for text processing."
   (setv model (keras.models.Sequential))
 
   (for [(, i layer) (enumerate layers)]
+    (setv first? (= i 0))
     (setv last? (= i (- (len layers) 1)))
-    (setv layer (create-layer layer last? alphabet model lookback))
+    (setv layer (create-layer layer first? last? alphabet model lookback))
     (.add model layer))
 
-  (.add model (keras.layers.core.Dense (. alphabet num-chars)))
-  (.add model (keras.layers.core.Activation "softmax"))
+  (.add model (keras.layers.core.Dense (. alphabet num-chars) :activation "softmax"))
 
   (.compile model :loss      "categorical_crossentropy"
                   :metrics   ["categorical_accuracy"]
