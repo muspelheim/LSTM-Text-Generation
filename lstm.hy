@@ -113,7 +113,7 @@
   (cond [(= t "dropout") (keras.layers.core.Dropout (float n))]
         [(= t "lstm")    (if first?
                            (keras.layers.recurrent.LSTM (int n)
-                              :input-shape      (, lookback (. alphabet num-chars))
+                              :input-shape (, lookback (. alphabet num-chars))
                               :return-sequences True)
                            (keras.layers.recurrent.LSTM (int n)
                               :return-sequences (not last?)))]))
@@ -128,7 +128,8 @@
     (setv layer (create-layer layer first? last? alphabet model lookback))
     (.add model layer))
 
-  (.add model (keras.layers.core.Dense (. alphabet num-chars) :activation "softmax"))
+  (.add model (keras.layers.core.Dense (. alphabet num-chars)
+                 :activation "softmax"))
 
   (.compile model :loss      "categorical_crossentropy"
                   :metrics   ["categorical_accuracy"]
@@ -159,7 +160,8 @@
   (.add-argument parser "--layers" :default "128" :metavar "<layers>" :type str
     :help "specify the layers (for example: lstm:128,dropout:0.2)")
 
-  (.add-argument parser "--learning-rate" :default "0.01" :metavar "<rate>" :type float
+  (.add-argument parser "--learning-rate" :default "0.01" :metavar "<rate>"
+                                          :type float
     :help "specify the learning rate")
 
   (.add-argument parser "--lookback" :default 32 :metavar "<length>" :type int
