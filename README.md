@@ -26,7 +26,7 @@ The LSTM is trained *character-by-character* (in contrast to *word-by-word*) whi
    `git clone https://github.com/philiparvidsson/LSTM-Text-Generation`
 3. Change working directory to it:
    `cd LSTM-Text-Generation`
-4. Run it and specify sources:
+4. Run the program and specify sources:
    `./lstm.hy --sources corpus.txt`
 
 After each completed epoch, the program will save the model to a file. You can then use it to generate text by invoking the program with the `--generate` switch and providing a seed text:
