@@ -20,8 +20,8 @@ The LSTM is trained *character-by-character* (in contrast to *word-by-word*) whi
 
 ## Running the program
 1. Install prerequisites:
-   `pip install h5py hy keras numpy tensorflow`  
-   <sup><i><b>&nbsp;&nbsp;&nbsp;&nbsp;NOTE:</b> If you want to perform computations on your graphics card, first install CUDA and cuDNN, then install `tensorflow-gpu` instead of `tensorflow` above.</i></sup>  
+   `pip install h5py hy keras numpy tensorflow`
+   <sup><i><b>&nbsp;&nbsp;&nbsp;&nbsp;NOTE:</b> If you want to perform computations on your graphics card, first install CUDA and cuDNN, then install `tensorflow-gpu` instead of `tensorflow` above.</i></sup>
 2. Clone this repository:
    `git clone https://github.com/philiparvidsson/LSTM-Text-Generation`
 3. Change working directory to it:
@@ -44,10 +44,15 @@ The batch size is set like this: `--batch-size 256`. The default is 128.
 ### Disabling GPU acceleration
 If you only want to do computations on the CPU (despite having installed GPU-enabled TensorFlow), specify the `--cpu` flag.
 
+### Generation
+Specifying the `--generate` command line argument and providing a seed text starts the program in *text generation mode* using the specified text as the initial seed for generation. You must train a model on a body of text before using the `--generate` command line argument. Example:
+
+`--generate "hello world"`
+
 ### Configuring layers
 The program defaults to a single 128-cell LSTM layer. You can specify custom layers using the `--layers` argument. For example, if we wanted to LSTM layers with 128 cells in the first and 64 in the last, with a dropout layer (with a dropout probability of 20%) inbetween, we would specify the following command line argument to the program:
 
-`--layers lstm:128,dropout:0.2,lstm:64`  
+`--layers lstm:128,dropout:0.2,lstm:64`
 <sup><i><b>&nbsp;&nbsp;&nbsp;&nbsp;NOTE:</b> The last layer must not be a dropout layer.</i></sup>
 
 ### Learning rate
@@ -58,10 +63,17 @@ You can use the `--lookback` command line argument to specify the size (in numbe
 
 `--lookback 50`
 
+### Model
+Use the `--model` command line argument to specify the model name. This tells the program the name of the model to load or save. For example, to save to (or load from, if the `--generate` flag has been specified) a model named `my_model`:
+
+`--model my_model`
+
 ### Stride
 Using the `---stride` command line argument lets you set how many characters to move the sliding window forward after each training iteration. This setting can be thought of as a way to reduce the memory footprint for large corpora. The default is 3. Example:
 
 `--stride 7`
+
+### Word-by-word training
 
 ## Results
 Below are a few interesting results attained by running the program on various corpora.
