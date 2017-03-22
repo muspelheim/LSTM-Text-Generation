@@ -14,12 +14,13 @@
 (defclass Alphabet [object]
   "Represents an alphabet of characters."
 
-  (defn --init-- [self chars]
+  (defn --init-- [self chars chars-are-words?]
     "Creates a new alphabet instance from the specified set of characters."
-    (setv self.chars         (.join "" chars)
-          self.num-chars     (len chars)
-          self.char-to-index (dict-comp c i [(, i c) (enumerate chars)])
-          self.index-to-char (dict-comp i c [(, i c) (enumerate chars)])))
+    (setv self.chars            (.join (if chars-are-words? "\n" "") chars)
+          self.chars-are-words? chars-are-words?
+          self.num-chars        (len chars)
+          self.char-to-index    (dict-comp c i [(, i c) (enumerate chars)])
+          self.index-to-char    (dict-comp i c [(, i c) (enumerate chars)])))
 
   (defn char [self i]
     "Gets the character in the alphabet associated with the specified index."
@@ -33,13 +34,14 @@
 ;;; functions
 ;;;-------------------------------------
 
-(defn build-dataset [text lookback stride]
+(defn build-dataset [text chars-are-words? lookback stride]
   "Builds a dataset from the specified text with the specified settings by
    compiling it to a one-hot encoded tensor."
-  (setv alphabet (Alphabet (sorted (list (set text))))
-        n (// (- (len text) lookback 1) stride)
-        x (np.zeros (, n lookback (. alphabet num-chars)) :dtype np.bool)
-        y (np.zeros (, n          (. alphabet num-chars)) :dtype np.bool))
+  (setv chars    (sorted (if chars-are-words? (set (.split text)) (list (set text))))
+        alphabet (Alphabet chars chars-are-words?)
+        n        (// (- (len text) lookback 1) stride)
+        x        (np.zeros (, n lookback (. alphabet num-chars)) :dtype np.bool)
+        y        (np.zeros (, n          (. alphabet num-chars)) :dtype np.bool))
   (for [i (range n)]
     (setv a  (* i stride)
           s  (cut text a (+ a lookback))
@@ -103,6 +105,7 @@
 
   (setv alphabet-path (+ path ".txt"))
   (with [f (open alphabet-path "w")]
+    (.write f (. alphabet chars-are-words?))
     (.write f (. alphabet chars))))
 
 (defn create-layer [spec first? last? alphabet model lookback]
@@ -179,6 +182,9 @@
   (.add-argument parser "--stride" :default 3 :metavar "<n>" :type int
     :help "specify the sliding window stride (in number of characters)")
 
+  (.add-argument parser "--word-by-word" :action "store_true"
+    :help "train word-by-word instead of character-by-character")
+
   (.parse-args parser))
 
 (defn sample [y]
@@ -232,7 +238,8 @@
         layers        (.split (. args layers) ",")
         learning-rate (. args learning-rate)
         lookback      (. args lookback)
-        stride        (. args stride))
+        stride        (. args stride)
+        word-by-word? (. args word-by-word))
 
   (if (. args cpu)
     (assoc os.environ "CUDA_VISIBLE_DEVICES" ""))
@@ -259,7 +266,7 @@
             (setv text (.lower text)))
 
           (print "building dataset...")
-          (setv (, alphabet x y) (build-dataset text lookback stride)))))
+          (setv (, alphabet x y) (build-dataset text word-by-word? lookback stride)))))
     (do
       (print "loading sources...")
       (setv text (.join "" (load-all-sources (. args sources))))
@@ -268,7 +275,7 @@
         (setv text (.lower text)))
 
       (print "building dataset...")
-      (setv (, alphabet x y) (build-dataset text lookback stride))
+      (setv (, alphabet x y) (build-dataset text word-by-word? lookback stride))
 
       (print "creating model...")
       (setv model (create-model alphabet layers learning-rate lookback))))
