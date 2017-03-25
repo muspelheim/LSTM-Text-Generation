@@ -94,7 +94,7 @@ Using the `---stride` command line argument lets you set how many characters to 
 
 `--stride 7`
 
-### Word-by-word training
+### Word-by-word training *(not yet implemented)*
 Specify the `--word-by-word` flag to train the model on one word at a time (i.e. training it to predict words) rather than one character at a time (i.e. training it to predict characters). Although this might result in more coherent generated sentences, this reduces the creative capability of the trained model—it will not be able to come up with new names or words.
 
 ## Results
