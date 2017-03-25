@@ -108,3 +108,8 @@ Below are a few interesting results attained by running the program on various c
 — *"18:34 For your feet, O Ishmel."*
 
 — *"119:6 The children of Israel said unto him, Fear upon the seven commandment, I will go us."*
+
+## Troubleshooting
+
+### The model seems unable to learn
+The neural network model might have become unstable because of too high learning rate. You can try *lowering* the learning rate. For example, the default is 0.01, so you could try specifying 0.001: `--learning-rate 0.001`
