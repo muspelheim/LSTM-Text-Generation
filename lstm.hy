@@ -105,7 +105,7 @@
 
   (setv alphabet-path (+ path ".txt"))
   (with [f (open alphabet-path "w")]
-    (.write f (. alphabet chars-are-words?))
+    ;;(.write f (. alphabet chars-are-words?))
     (.write f (. alphabet chars))))
 
 (defn create-layer [spec first? last? alphabet model lookback]
