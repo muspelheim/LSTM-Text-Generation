@@ -47,7 +47,7 @@ source activate lstm_shakespeare
 pip install h5py hy keras numpy tensorflow
 mkdir data models
 wget -O data/shakespeare.txt http://www.gutenberg.org/cache/epub/100/pg100.txt
-./lstm.hy --batch-size 256 --layers 512,dropout:0.2,512 --learning-rate 0.01 --lookback 40 --model models/shakespeare --sources data/shakespeare.txt --stride 7
+./lstm.hy --batch-size 256 --layers 512,dropout:0.2,512 --learning-rate 0.001 --lookback 40 --model models/shakespeare --sources data/shakespeare.txt --stride 7
 ```
 
 Let it run for at least fifty epochs (or until it reaches a *categorical accuracy* of at least 0.5—the higher the better), then hit ctrl-c to exit. Then, use the following command to generate text using the newly trained model:
