@@ -114,11 +114,12 @@
           n (int spec))
     (setv (, t n) (.split spec ":")))
   (cond [(= t "dropout") (keras.layers.core.Dropout (float n))]
-        [(= t "lstm")    (if first?
+        [(= t "lstm")    (if (and first? (not last))
                            (keras.layers.recurrent.LSTM (int n)
                               :input-shape (, lookback (. alphabet num-chars))
                               :return-sequences True)
                            (keras.layers.recurrent.LSTM (int n)
+                              :input-shape (, lookback (. alphabet num-chars))
                               :return-sequences (not last?)))]))
 
 (defn create-model [alphabet layers learning-rate lookback]
@@ -233,6 +234,12 @@
   (print)
 
   (setv args (parse-args))
+
+  (if args.word-by-word
+    (do
+      (print "word-by-word not yet implemented!")
+      (import sys)
+      (sys.exit 0)))
 
   (setv batch-size    (. args batch-size)
         layers        (.split (. args layers) ",")

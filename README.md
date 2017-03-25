@@ -35,6 +35,27 @@ After each completed epoch, the program will save the model to a file. You can t
 
 Type `./lstm.hy --help` to see more information on how to use the program.
 
+### Example
+
+If you have [Anaconda](https://www.continuum.io/), you can use the following sequence of commands to clone this repository, set up an environment, install dependencies and train the model on Shakespeare's texts:
+
+```bash
+git clone https://github.com/philiparvidsson/LSTM-Text-Generation
+cd LSTM-Text-Generation
+conda create -n lstm_shakespeare python=3 -y
+source activate lstm_shakespeare
+pip install h5py hy keras numpy tensorflow
+mkdir data models
+wget -O data/shakespeare.txt http://www.gutenberg.org/cache/epub/100/pg100.txt
+./lstm.hy --batch-size 256 --layers 512,dropout:0.2,512 --learning-rate 0.01 --lookback 40 --model models/shakespeare --sources data/shakespeare.txt --stride 7
+```
+
+Let it run for at least fifty epochs (or reaching a *categorical accuracy* of at least 0.5), then hit ctrl-c to exit. Then, use the following command to generate text using the newly trained model:
+
+```bash
+./lstm.hy --generate "For thy sweet love remembered such wealth brings" --model models/shakespeare.txt
+```
+
 ## Configuration
 There are various settings to play with in the program. For the purpose of this program, there are no "optimal" settings- Rather, you should go ahead and experiment to come up with different, interesting results. If you want to see all available settings, type `./lstm.hy --help` in your terminal, with the working directory set to the path where the `lstm.hy` program is located.
 
@@ -74,6 +95,7 @@ Using the `---stride` command line argument lets you set how many characters to 
 `--stride 7`
 
 ### Word-by-word training
+Specify the `--word-by-word` flag to train the model on one word at a time (i.e. training it to predict words) rather than one character at a time (i.e. training it to predict characters). Although this might result in more coherent generated sentences, this reduces the creative capability of the trained model—it will not be able to come up with new names or words.
 
 ## Results
 Below are a few interesting results attained by running the program on various corpora.
