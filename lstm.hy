@@ -74,7 +74,7 @@
   (with [f (open alphabet-path "r")]
     (setv chars (.read f)))
 
-  (, (Alphabet chars) (keras.models.load_model model-path)))
+  (, (Alphabet chars False) (keras.models.load_model model-path)))
 
 (defn load-source [s]
   "Loads the specified source, either a filename or an HTTP URL."
