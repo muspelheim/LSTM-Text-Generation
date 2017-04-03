@@ -154,3 +154,7 @@ Delivery nigga*
 So why not combine two extremes into one? Here, I have let the program train a model on the King James Bible *and* Snoop Dogg song lyrics. The results are... well, judge for yourself. Offensiveness ahead.
 
 — **16:21** *"Saying, The priest speak my soul in my motherfucker."*
+
+— **38:18** *"Ay you love out the pimpeth not die, which I cake bitches and a plocked before their sin"*
+
+— **22:13** *"And he shall not burn his weed for the stranger, when I can't call this shit was that taw it?"*
