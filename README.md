@@ -155,6 +155,7 @@ So why not combine two extremes into one? Here, I have let the program train a m
 
 — **16:21** *"Saying, The priest speak my soul in my motherfucker."*
 
+— **22:13** *"And he shall not burn his weed for the stranger, when I can't call this shit was that taw it?"*
+
 — **38:18** *"Ay you love out the pimpeth not die, which I cake bitches and a plocked before their sin"*
 
-— **22:13** *"And he shall not burn his weed for the stranger, when I can't call this shit was that taw it?"*
