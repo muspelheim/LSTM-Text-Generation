@@ -151,7 +151,7 @@ You know the clock where I problem, let's check
 Ya cuz just say, Yeah, we just light? Fuck me  
 Delivery nigga*
 
-### The King James Bible + Snoop Dogg
+### King James Bible + Snoop Dogg
 So why not combine two extremes into one? Here, I have let the program train a model on the King James Bible *and* Snoop Dogg song lyrics. The results are... well, judge for yourself. Offensiveness ahead.
 
 — **16:21** *"Saying, The priest speak my soul in my motherfucker."*
