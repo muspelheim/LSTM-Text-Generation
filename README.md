@@ -99,6 +99,11 @@ Using the `---stride` command line argument lets you set how many characters to 
 ### Word-by-word training *(not yet implemented)*
 Specify the `--word-by-word` flag to train the model on one word at a time (i.e. training it to predict words) rather than one character at a time (i.e. training it to predict characters). Although this might result in more coherent generated sentences, this reduces the creative capability of the trained model—it will not be able to come up with new names or words.
 
+## Troubleshooting
+
+* **The model seems unable to learn**  
+  The neural network model might have become unstable because of too high learning rate. You can try *lowering* the learning rate. For example, the default is 0.01, so you could try specifying 0.001: `--learning-rate 0.001`
+
 ## Results
 Below are a few interesting results attained by running the program on various corpora.
 
@@ -115,7 +120,6 @@ I trained a model on the King James Bible for about a day on my Nvidia GTX 1080.
 — **18:34** *"For your feet, O Ishmel."*
 
 — **119:6** *"The children of Israel said unto him, Fear upon the seven commandment, I will go us."*
-
 
 ### Snoop Dogg
 Taking this a little further, I trained a model on Snoop Dogg song lyrics for a while and then let it generate new songs inspired by Snoop Dogg's work. Funny... and offensive!
@@ -150,8 +154,3 @@ Delivery nigga*
 So why not combine two extremes into one? Here, I have let the program train a model on the King James Bible *and* Snoop Dogg song lyrics. The results are... well, judge for yourself. Offensiveness ahead.
 
 — **16:21** *"Saying, The priest speak my soul in my motherfucker."*
-
-## Troubleshooting
-
-* **The model seems unable to learn**  
-  The neural network model might have become unstable because of too high learning rate. You can try *lowering* the learning rate. For example, the default is 0.01, so you could try specifying 0.001: `--learning-rate 0.001`
