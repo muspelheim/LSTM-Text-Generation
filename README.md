@@ -112,7 +112,7 @@ ___
 ___
 <br><br><br><br>
 ### King James bible
-I trained a model on the King James Bible for about a day on my Nvidia GTX 1080. The results were pretty funny and interesting:
+I trained a model on the King James Bible for about a day on my Nvidia GeForce GTX 1080. The results were pretty funny and interesting:
 
 — **9:7** *"And the man of vily made mad the land of Egypt."*
 
