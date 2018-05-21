@@ -53,7 +53,7 @@ wget -O data/shakespeare.txt http://www.gutenberg.org/cache/epub/100/pg100.txt
 Let it run for at least fifty epochs (or until it reaches a *categorical accuracy* of at least 0.5—the higher the better), then hit ctrl-c to exit. Then, use the following command to generate text using the newly trained model:
 
 ```bash
-./lstm.hy --generate "For thy sweet love remembered such wealth brings" --model models/shakespeare.txt
+./lstm.hy --generate "For thy sweet love remembered such wealth brings" --model models/shakespeare
 ```
 
 ## Configuration
