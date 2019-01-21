@@ -19,8 +19,8 @@
     (setv self.chars            (.join (if chars-are-words? "\n" "") chars)
           self.chars-are-words? chars-are-words?
           self.num-chars        (len chars)
-          self.char-to-index    (dict-comp c i [(, i c) (enumerate chars)])
-          self.index-to-char    (dict-comp i c [(, i c) (enumerate chars)])))
+          self.char-to-index    (dict (lfor i (enumerate chars) (, (last i) (first i))))
+          self.index-to-char    (dict (lfor i (enumerate chars) i)))
 
   (defn char [self i]
     "Gets the character in the alphabet associated with the specified index."
