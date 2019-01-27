@@ -20,7 +20,7 @@
           self.chars-are-words? chars-are-words?
           self.num-chars        (len chars)
           self.char-to-index    (dict (lfor i (enumerate chars) (, (last i) (first i))))
-          self.index-to-char    (dict (lfor i (enumerate chars) i)))
+          self.index-to-char    (dict (lfor i (enumerate chars) i))))
 
   (defn char [self i]
     "Gets the character in the alphabet associated with the specified index."
@@ -85,7 +85,7 @@
 
 (defn load-all-sources [sources]
   "Loads all specified sources and returns them in a list."
-  (list-comp (load-source s) [s sources]))
+  (lfor s sources (load-source s)))
 
 (defn read-file [fn]
   "Reads and returns the contents of the specified file."
